@@ -1,8 +1,103 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #faf8f5;
+  --foreground: #2c2416;
+  
+  /* Desert theme colors - Light mode */
+  --sand-50: #fefdfb;
+  --sand-100: #faf8f5;
+  --sand-200: #f5f1ea;
+  --sand-300: #e8e0d3;
+  --sand-400: #d4c5b0;
+  --sand-500: #b8a082;
+  --sand-600: #9d8565;
+  --sand-700: #7a684f;
+  --sand-800: #5c4d3a;
+  --sand-900: #3d3325;
+  
+  --terracotta-50: #fef7f4;
+  --terracotta-100: #fdeee6;
+  --terracotta-200: #fad9c8;
+  --terracotta-300: #f6b99f;
+  --terracotta-400: #f08f6b;
+  --terracotta-500: #e86a3d;
+  --terracotta-600: #d9542a;
+  --terracotta-700: #b6421f;
+  --terracotta-800: #96381d;
+  --terracotta-900: #7a311b;
+  
+  --sunset-50: #fff7ed;
+  --sunset-100: #ffedd5;
+  --sunset-200: #fed7aa;
+  --sunset-300: #fdba74;
+  --sunset-400: #fb923c;
+  --sunset-500: #f97316;
+  --sunset-600: #ea580c;
+  --sunset-700: #c2410c;
+  --sunset-800: #9a3412;
+  --sunset-900: #7c2d12;
+  
+  --sky-50: #f0f9ff;
+  --sky-100: #e0f2fe;
+  --sky-200: #bae6fd;
+  --sky-300: #7dd3fc;
+  --sky-400: #38bdf8;
+  --sky-500: #0ea5e9;
+  --sky-600: #0284c7;
+  --sky-700: #0369a1;
+  --sky-800: #075985;
+  --sky-900: #0c4a6e;
+}
+
+.dark {
+  --background: #1a1611;
+  --foreground: #f5f1ea;
+  
+  /* Desert theme colors - Dark mode */
+  --sand-50: #3d3325;
+  --sand-100: #5c4d3a;
+  --sand-200: #7a684f;
+  --sand-300: #9d8565;
+  --sand-400: #b8a082;
+  --sand-500: #d4c5b0;
+  --sand-600: #e8e0d3;
+  --sand-700: #f5f1ea;
+  --sand-800: #faf8f5;
+  --sand-900: #fefdfb;
+  
+  --terracotta-50: #7a311b;
+  --terracotta-100: #96381d;
+  --terracotta-200: #b6421f;
+  --terracotta-300: #d9542a;
+  --terracotta-400: #e86a3d;
+  --terracotta-500: #f08f6b;
+  --terracotta-600: #f6b99f;
+  --terracotta-700: #fad9c8;
+  --terracotta-800: #fdeee6;
+  --terracotta-900: #fef7f4;
+  
+  --sunset-50: #7c2d12;
+  --sunset-100: #9a3412;
+  --sunset-200: #c2410c;
+  --sunset-300: #ea580c;
+  --sunset-400: #f97316;
+  --sunset-500: #fb923c;
+  --sunset-600: #fdba74;
+  --sunset-700: #fed7aa;
+  --sunset-800: #ffedd5;
+  --sunset-900: #fff7ed;
+  
+  --sky-50: #0c4a6e;
+  --sky-100: #075985;
+  --sky-200: #0369a1;
+  --sky-300: #0284c7;
+  --sky-400: #0ea5e9;
+  --sky-500: #38bdf8;
+  --sky-600: #7dd3fc;
+  --sky-700: #bae6fd;
+  --sky-800: #e0f2fe;
+  --sky-900: #f0f9ff;
 }
 
 @theme inline {
@@ -10,17 +105,56 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  
+  /* Desert color palette */
+  --color-sand-50: var(--sand-50);
+  --color-sand-100: var(--sand-100);
+  --color-sand-200: var(--sand-200);
+  --color-sand-300: var(--sand-300);
+  --color-sand-400: var(--sand-400);
+  --color-sand-500: var(--sand-500);
+  --color-sand-600: var(--sand-600);
+  --color-sand-700: var(--sand-700);
+  --color-sand-800: var(--sand-800);
+  --color-sand-900: var(--sand-900);
+  
+  --color-terracotta-50: var(--terracotta-50);
+  --color-terracotta-100: var(--terracotta-100);
+  --color-terracotta-200: var(--terracotta-200);
+  --color-terracotta-300: var(--terracotta-300);
+  --color-terracotta-400: var(--terracotta-400);
+  --color-terracotta-500: var(--terracotta-500);
+  --color-terracotta-600: var(--terracotta-600);
+  --color-terracotta-700: var(--terracotta-700);
+  --color-terracotta-800: var(--terracotta-800);
+  --color-terracotta-900: var(--terracotta-900);
+  
+  --color-sunset-50: var(--sunset-50);
+  --color-sunset-100: var(--sunset-100);
+  --color-sunset-200: var(--sunset-200);
+  --color-sunset-300: var(--sunset-300);
+  --color-sunset-400: var(--sunset-400);
+  --color-sunset-500: var(--sunset-500);
+  --color-sunset-600: var(--sunset-600);
+  --color-sunset-700: var(--sunset-700);
+  --color-sunset-800: var(--sunset-800);
+  --color-sunset-900: var(--sunset-900);
+  
+  --color-sky-50: var(--sky-50);
+  --color-sky-100: var(--sky-100);
+  --color-sky-200: var(--sky-200);
+  --color-sky-300: var(--sky-300);
+  --color-sky-400: var(--sky-400);
+  --color-sky-500: var(--sky-500);
+  --color-sky-600: var(--sky-600);
+  --color-sky-700: var(--sky-700);
+  --color-sky-800: var(--sky-800);
+  --color-sky-900: var(--sky-900);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

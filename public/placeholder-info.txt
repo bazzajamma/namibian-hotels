@@ -1,0 +1,16 @@
+Placeholder Images
+==================
+
+This directory should contain placeholder images for development:
+
+- placeholder-hotel.jpg - Hotel images
+- placeholder-room.jpg - Room images  
+- placeholder-restaurant.jpg - Restaurant images
+- placeholder-offer.jpg - Offer images
+- placeholder-destination.jpg - Destination images
+
+You can use any images for development, or replace with actual images from Supabase Storage.
+The application will work with mock data even without these images, but they will show broken image icons.
+
+For production, images should be stored in Supabase Storage and referenced by URL in the database.
+
