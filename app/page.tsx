@@ -3,6 +3,7 @@ import { HotelSlider } from '@/components/sliders/HotelSlider';
 import { OfferCard } from '@/components/OfferCard';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import FloatingLines from '@/components/FloatingLines';
 import { getHotels, getOffers } from '@/lib/data';
 
 export default async function Home() {
@@ -15,38 +16,49 @@ export default async function Home() {
       <main id="main-content" className="flex-1">
         {/* Hero Section */}
         <section className="relative h-screen flex items-center justify-center overflow-hidden">
-          <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
-            <source src="/welcome-video.mp4" type="video/mp4" />
+          <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover" preload="auto">
+            <source src="/nam-hotels.mp4" type="video/mp4" />
           </video>
-            <div className="relative z-10 text-center px-4 max-w-4xl mx-auto bg-sand-50/10 backdrop-blur-xs p-8 rounded-lg">
-              <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">
-                Namibian Hotels
-              </h1>
-              <p className="text-xl md:text-2xl text-white mb-8 drop-shadow-lg">
-                Experience luxury hospitality in the heart of Namibia&apos;s stunning desert landscapes
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href="/hotels"
-                  className="px-8 py-4 bg-terracotta-600 hover:bg-terracotta-700 text-white rounded-lg font-semibold text-lg transition-colors shadow-lg"
-                >
-                  Explore Our Hotels
-                </Link>
-                <Link
+          <FloatingLines 
+            enabledWaves={['top', 'middle', 'bottom']}
+            lineCount={[8, 12, 10]}
+            lineDistance={[6, 5, 4]}
+            animationSpeed={0.8}
+            interactive={true}
+            parallax={true}
+            className="absolute inset-0 opacity-30"
+            mixBlendMode="screen"
+          />
+          <div className="absolute z-11 text-center px-4 max-w-4xl mx-auto my-auto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <h1 className="text-5xl md:text-7xl font-bold text-terracotta-600 mb-6 drop-shadow-lg">
+              Namibian Hotels
+            </h1>
+            <p className="text-xl md:text-2xl text-white mb-8 drop-shadow-lg">
+              Experience luxury hospitality in the heart of Namibia&apos;s stunning desert landscapes
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/hotels"
+                className="px-8 py-4 bg-sunset-500 hover:bg-white/30 backdrop-blur-sm text-white rounded-lg font-semibold text-lg transition-colors border-2 border-white/50"
+              >
+                Explore Our Hotels
+              </Link>
+              <Link
                   href="/offers"
-                  className="px-8 py-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-lg font-semibold text-lg transition-colors border-2 border-white/50"
-                >
-                  View Offers
-                </Link>
-              </div>
+                className="px-8 py-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-lg font-semibold text-lg transition-colors border-2 border-white/50"
+              >
+                View Offers
+              </Link>
             </div>
+          </div>
+          
         </section>
 
         {/* Hotels Slider Section */}
         <section className="py-16 bg-sand-50 dark:bg-sand-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-4xl md:text-5xl font-bold text-sand-900 dark:text-sand-100 mb-4">
+              <h2 className="text-4xl md:text-5xl font-bold text-terracotta-500 mb-4">
                 Our Hotels
               </h2>
               <p className="text-lg text-sand-700 dark:text-sand-300 max-w-2xl mx-auto">
@@ -58,7 +70,7 @@ export default async function Home() {
             <div className="text-center mt-8">
               <Link
                 href="/hotels"
-                className="inline-block px-8 py-3 bg-terracotta-500 hover:bg-terracotta-700 text-white rounded-lg font-semibold transition-colors"
+                className="inline-block px-8 py-3 bg-sunset-500 hover:bg-sunset-700 text-white rounded-lg font-semibold transition-colors"
               >
                 View All Hotels
               </Link>
@@ -91,7 +103,7 @@ export default async function Home() {
             <div className="text-center mt-8">
               <Link
                 href="/offers"
-                className="inline-block px-8 py-3 bg-terracotta-600 hover:bg-terracotta-700 text-white rounded-lg font-semibold transition-colors"
+                className="inline-block px-8 py-3 bg-sunset-500 hover:bg-sunset-700 text-white rounded-lg font-semibold transition-colors"
               >
                 View All Offers
               </Link>
@@ -110,7 +122,7 @@ export default async function Home() {
             </p>
             <Link
               href="/hotels"
-              className="inline-block px-8 py-4 bg-white text-terracotta-600 rounded-lg font-semibold text-lg hover:bg-sand-100 transition-colors shadow-lg"
+              className="inline-block px-8 py-4 bg-white text-sunset-500 rounded-lg font-semibold text-lg hover:bg-sand-100 transition-colors shadow-lg"
             >
               Book Now
             </Link>

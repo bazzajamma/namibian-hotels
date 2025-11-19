@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/server';
 import { Hotel, Room, Restaurant, Offer, Destination, InvestorDocument } from '@/types';
 
 // Mock data for development - replace with actual Supabase queries
@@ -11,7 +11,7 @@ export async function getHotels(): Promise<Hotel[]> {
 
     let supabase;
     try {
-      supabase = createClient();
+      supabase = await createClient();
     } catch (clientError) {
       console.log('Failed to create Supabase client, using mock data:', clientError);
       return getMockHotels();
@@ -20,11 +20,12 @@ export async function getHotels(): Promise<Hotel[]> {
     const { data, error } = await supabase.from('hotels').select('*');
     
     if (error) {
-      // Check if error is an empty object {} - these should be silently ignored
-      const errorString = JSON.stringify(error);
-      const isEmptyError = errorString === '{}';
+      // Check if error is an empty object or has no meaningful content
+      const errorKeys = Object.keys(error);
+      const isEmptyError = errorKeys.length === 0 || 
+        (!error.message && !error.code && !error.details && !error.hint);
       
-      // Only log if error has actual content (not empty object)
+      // Only log if error has actual meaningful content
       if (!isEmptyError) {
         console.error('Error fetching hotels:', error);
       }
@@ -49,7 +50,7 @@ export async function getHotels(): Promise<Hotel[]> {
 
 export async function getHotel(id: string): Promise<Hotel | null> {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await supabase.from('hotels').select('*').eq('id', id).single();
     
     if (error) {
@@ -71,7 +72,7 @@ export async function getRoomsByHotel(hotelId: string): Promise<Room[]> {
       return getMockRooms().filter(r => r.hotelId === hotelId);
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await supabase.from('rooms').select('*').eq('hotel_id', hotelId);
     
     if (error) {
@@ -93,7 +94,7 @@ export async function getRestaurantsByHotel(hotelId: string): Promise<Restaurant
       return getMockRestaurants().filter(r => r.hotelId === hotelId);
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await supabase.from('restaurants').select('*').eq('hotel_id', hotelId);
     
     if (error) {
@@ -115,7 +116,7 @@ export async function getOffers(): Promise<Offer[]> {
       return getMockOffers();
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
     // Fetch offers with their related hotels through junction table
     const { data: offersData, error: offersError } = await supabase
       .from('offers')
@@ -162,7 +163,7 @@ export async function getDestinationsByHotel(hotelId: string): Promise<Destinati
       return getMockDestinations();
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
     // Fetch destinations linked to this hotel through junction table
     const { data: hotelDestinations, error: junctionError } = await supabase
       .from('hotel_destinations')
@@ -224,7 +225,7 @@ export async function getInvestorDocuments(): Promise<InvestorDocument[]> {
       return getMockInvestorDocuments();
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await supabase.from('investor_documents').select('*').order('date', { ascending: false });
     
     if (error) {

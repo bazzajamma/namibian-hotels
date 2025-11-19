@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import FloatingLines from '@/components/FloatingLines';
 
 export default function AboutPage() {
   return (
@@ -9,7 +10,16 @@ export default function AboutPage() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative h-screen flex items-center justify-center overflow-hidden" style={{ backgroundImage: 'url(/about-namibian-hotels.jpg)', backgroundSize: 'cover', backgroundPosition: 'center center' }}>
-          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto bg-sand-50/10 backdrop-blur-xs p-8 rounded-lg">
+          <FloatingLines 
+            enabledWaves={['top', 'middle', 'bottom']}
+            lineCount={[8, 12, 10]}
+            lineDistance={[6, 5, 4]}
+            animationSpeed={0.8}
+            interactive={true}
+            parallax={true}
+            className="absolute inset-0 opacity-30"
+          />
+          <div className="absolute z-10 text-center px-4 max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">
               About Us
             </h1>

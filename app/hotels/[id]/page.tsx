@@ -6,6 +6,7 @@ import { Footer } from '@/components/Footer';
 import { RoomSlider } from '@/components/sliders/RoomSlider';
 import { RestaurantSlider } from '@/components/sliders/RestaurantSlider';
 import { DestinationCard } from '@/components/DestinationCard';
+import FloatingLines from '@/components/FloatingLines';
 import { getHotel, getRoomsByHotel, getRestaurantsByHotel, getDestinationsByHotel } from '@/lib/data';
 
 interface HotelDetailPageProps {
@@ -28,7 +29,7 @@ export default async function HotelDetailPage({ params }: HotelDetailPageProps) 
       <Navbar />
       <main className="flex-1">
         {/* Hotel Header */}
-        <section className="relative flex h-screen items-center">
+        <section className="relative h-screen flex items-center justify-center overflow-hidden">
           <Image
             src={hotel.images[0] || '/placeholder-hotel.jpg'}
             alt={hotel.name}
@@ -36,7 +37,16 @@ export default async function HotelDetailPage({ params }: HotelDetailPageProps) 
             className="object-cover"
             priority
           />
-          <div className="relative z-10 text-white text-center px-4 max-w-4xl mx-auto bg-sand-50/10 backdrop-blur-xs p-8 rounded-lg">
+          <FloatingLines 
+            enabledWaves={['top', 'middle', 'bottom']}
+            lineCount={[8, 12, 10]}
+            lineDistance={[6, 5, 4]}
+            animationSpeed={0.8}
+            interactive={true}
+            parallax={true}
+            className="absolute inset-0 opacity-30"
+          />
+          <div className="absolute z-10 text-white text-center px-4 max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold mb-4">{hotel.name}</h1>
             <p className="text-xl md:text-2xl mb-4">{hotel.location}</p>
             {hotel.rating && (

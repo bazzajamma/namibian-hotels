@@ -8,7 +8,7 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 bg-sand-100/80 dark:bg-sand-900/80 backdrop-blur-md border-b border-sand-300 dark:border-sand-700">
+    <nav className="sticky top-0 z-50 bg-sand-100/80 dark:bg-sand-800/80 backdrop-blur-md border-b border-sand-300 dark:border-sand-700">
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-terracotta-600 focus:text-white focus:rounded-lg">
         Skip to main content
       </a>
