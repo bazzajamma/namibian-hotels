@@ -1,4 +1,3 @@
-import { createClient } from '@/lib/supabase/server';
 import { Hotel, Room, Restaurant, Offer, Destination, InvestorDocument } from '@/types';
 
 // Mock data for development - replace with actual Supabase queries
@@ -11,6 +10,7 @@ export async function getHotels(): Promise<Hotel[]> {
 
     let supabase;
     try {
+      const { createClient } = await import('@/lib/supabase/server');
       supabase = await createClient();
     } catch (clientError) {
       console.log('Failed to create Supabase client, using mock data:', clientError);
@@ -50,6 +50,7 @@ export async function getHotels(): Promise<Hotel[]> {
 
 export async function getHotel(id: string): Promise<Hotel | null> {
   try {
+    const { createClient } = await import('@/lib/supabase/server');
     const supabase = await createClient();
     const { data, error } = await supabase.from('hotels').select('*').eq('id', id).single();
     
@@ -72,6 +73,7 @@ export async function getRoomsByHotel(hotelId: string): Promise<Room[]> {
       return getMockRooms().filter(r => r.hotelId === hotelId);
     }
 
+    const { createClient } = await import('@/lib/supabase/server');
     const supabase = await createClient();
     const { data, error } = await supabase.from('rooms').select('*').eq('hotel_id', hotelId);
     
@@ -94,6 +96,7 @@ export async function getRestaurantsByHotel(hotelId: string): Promise<Restaurant
       return getMockRestaurants().filter(r => r.hotelId === hotelId);
     }
 
+    const { createClient } = await import('@/lib/supabase/server');
     const supabase = await createClient();
     const { data, error } = await supabase.from('restaurants').select('*').eq('hotel_id', hotelId);
     
@@ -116,6 +119,7 @@ export async function getOffers(): Promise<Offer[]> {
       return getMockOffers();
     }
 
+    const { createClient } = await import('@/lib/supabase/server');
     const supabase = await createClient();
     // Fetch offers with their related hotels through junction table
     const { data: offersData, error: offersError } = await supabase
@@ -163,6 +167,7 @@ export async function getDestinationsByHotel(hotelId: string): Promise<Destinati
       return getMockDestinations();
     }
 
+    const { createClient } = await import('@/lib/supabase/server');
     const supabase = await createClient();
     // Fetch destinations linked to this hotel through junction table
     const { data: hotelDestinations, error: junctionError } = await supabase
@@ -218,6 +223,7 @@ export async function getDestinationsByHotel(hotelId: string): Promise<Destinati
   }
 }
 
+// Server version for use in server components
 export async function getInvestorDocuments(): Promise<InvestorDocument[]> {
   try {
     // Check if Supabase is configured
@@ -225,6 +231,7 @@ export async function getInvestorDocuments(): Promise<InvestorDocument[]> {
       return getMockInvestorDocuments();
     }
 
+    const { createClient } = await import('@/lib/supabase/server');
     const supabase = await createClient();
     const { data, error } = await supabase.from('investor_documents').select('*').order('date', { ascending: false });
     

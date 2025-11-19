@@ -5,7 +5,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { DocumentDownload } from '@/components/DocumentDownload';
 import { InvestorDocument } from '@/types';
-import { getInvestorDocuments } from '@/lib/data';
+import { getInvestorDocumentsClient } from '@/lib/data-client';
 
 export default function InvestorsPage() {
   const [documents, setDocuments] = useState<InvestorDocument[]>([]);
@@ -16,7 +16,7 @@ export default function InvestorsPage() {
   useEffect(() => {
     async function fetchDocuments() {
       try {
-        const data = await getInvestorDocuments();
+        const data = await getInvestorDocumentsClient();
         setDocuments(data);
         setFilteredDocuments(data);
       } catch (error) {

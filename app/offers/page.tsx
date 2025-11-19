@@ -5,7 +5,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { OfferCard } from '@/components/OfferCard';
 import { Offer } from '@/types';
-import { getOffers } from '@/lib/data';
+import { getOffersClient } from '@/lib/data-client';
 
 export default function OffersPage() {
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -16,7 +16,7 @@ export default function OffersPage() {
   useEffect(() => {
     async function fetchOffers() {
       try {
-        const data = await getOffers();
+        const data = await getOffersClient();
         setOffers(data);
         setFilteredOffers(data);
       } catch (error) {
