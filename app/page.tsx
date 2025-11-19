@@ -14,31 +14,32 @@ export default async function Home() {
       <Navbar />
       <main id="main-content" className="flex-1">
         {/* Hero Section */}
-        <section className="relative h-[600px] md:h-[700px] flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-terracotta-600 via-sunset-500 to-terracotta-800 opacity-90" />
-          <div className="absolute inset-0 bg-[url('/placeholder-hotel.jpg')] bg-cover bg-center opacity-20" />
-          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">
-              Welcome to Namibian Hotels
-            </h1>
-            <p className="text-xl md:text-2xl text-sand-100 mb-8 drop-shadow-md">
-              Experience luxury hospitality in the heart of Namibia&apos;s stunning desert landscapes
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/hotels"
-                className="px-8 py-4 bg-terracotta-600 hover:bg-terracotta-700 text-white rounded-lg font-semibold text-lg transition-colors shadow-lg"
-              >
-                Explore Our Hotels
-              </Link>
-              <Link
-                href="/offers"
-                className="px-8 py-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-lg font-semibold text-lg transition-colors border-2 border-white/50"
-              >
-                View Offers
-              </Link>
+        <section className="relative h-screen flex items-center justify-center overflow-hidden">
+          <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
+            <source src="/welcome-video.mp4" type="video/mp4" />
+          </video>
+            <div className="relative z-10 text-center px-4 max-w-4xl mx-auto bg-sand-50/10 backdrop-blur-xs p-8 rounded-lg">
+              <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">
+                Namibian Hotels
+              </h1>
+              <p className="text-xl md:text-2xl text-white mb-8 drop-shadow-lg">
+                Experience luxury hospitality in the heart of Namibia&apos;s stunning desert landscapes
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/hotels"
+                  className="px-8 py-4 bg-terracotta-600 hover:bg-terracotta-700 text-white rounded-lg font-semibold text-lg transition-colors shadow-lg"
+                >
+                  Explore Our Hotels
+                </Link>
+                <Link
+                  href="/offers"
+                  className="px-8 py-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-lg font-semibold text-lg transition-colors border-2 border-white/50"
+                >
+                  View Offers
+                </Link>
+              </div>
             </div>
-          </div>
         </section>
 
         {/* Hotels Slider Section */}
@@ -57,7 +58,7 @@ export default async function Home() {
             <div className="text-center mt-8">
               <Link
                 href="/hotels"
-                className="inline-block px-8 py-3 bg-terracotta-600 hover:bg-terracotta-700 text-white rounded-lg font-semibold transition-colors"
+                className="inline-block px-8 py-3 bg-terracotta-500 hover:bg-terracotta-700 text-white rounded-lg font-semibold transition-colors"
               >
                 View All Hotels
               </Link>

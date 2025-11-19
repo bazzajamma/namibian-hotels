@@ -28,7 +28,7 @@ export default async function HotelDetailPage({ params }: HotelDetailPageProps) 
       <Navbar />
       <main className="flex-1">
         {/* Hotel Header */}
-        <section className="relative h-[500px] md:h-[600px]">
+        <section className="relative flex h-screen items-center">
           <Image
             src={hotel.images[0] || '/placeholder-hotel.jpg'}
             alt={hotel.name}
@@ -36,13 +36,12 @@ export default async function HotelDetailPage({ params }: HotelDetailPageProps) 
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-sand-900/90 via-sand-900/50 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white">
+          <div className="relative z-10 text-white text-center px-4 max-w-4xl mx-auto bg-sand-50/10 backdrop-blur-xs p-8 rounded-lg">
             <h1 className="text-4xl md:text-6xl font-bold mb-4">{hotel.name}</h1>
-            <p className="text-xl md:text-2xl text-terracotta-300 mb-4">{hotel.location}</p>
+            <p className="text-xl md:text-2xl mb-4">{hotel.location}</p>
             {hotel.rating && (
               <div className="flex items-center gap-2">
-                <span className="text-sunset-400 text-2xl">★</span>
+                <span className="text-2xl">★</span>
                 <span className="text-xl font-semibold">{hotel.rating}</span>
               </div>
             )}

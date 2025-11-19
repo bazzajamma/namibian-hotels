@@ -8,10 +8,8 @@ export default function AboutPage() {
       <Navbar />
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative h-[500px] md:h-[600px] flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-terracotta-600 via-sunset-500 to-terracotta-800 opacity-90" />
-          <div className="absolute inset-0 bg-[url('/placeholder-hotel.jpg')] bg-cover bg-center opacity-20" />
-          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+        <section className="relative h-screen flex items-center justify-center overflow-hidden" style={{ backgroundImage: 'url(/about-namibian-hotels.jpg)', backgroundSize: 'cover', backgroundPosition: 'center center' }}>
+          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto bg-sand-50/10 backdrop-blur-xs p-8 rounded-lg">
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">
               About Us
             </h1>

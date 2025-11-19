@@ -52,8 +52,8 @@ export function HotelSlider({ hotels }: HotelSliderProps) {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-sand-900/80 via-sand-900/40 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                    <h3 className="text-3xl md:text-4xl font-bold mb-2">{hotel.name}</h3>
-                    <p className="text-lg mb-4 line-clamp-2">{hotel.description}</p>
+                    <h3 className="text-3xl text-sand-100 md:text-4xl font-bold mb-2">{hotel.name}</h3>
+                    <p className="text-lg mb-4 text-sand-200 line-clamp-2">{hotel.description}</p>
                     <p className="text-terracotta-300 font-semibold">{hotel.location}</p>
                   </div>
                 </div>
@@ -68,7 +68,7 @@ export function HotelSlider({ hotels }: HotelSliderProps) {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-sand-900/50 hover:bg-sand-900/70 text-white p-3 rounded-full transition-colors z-10"
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-sand-50/50 hover:bg-sand-50/70 text-white p-3 rounded-full transition-colors z-10"
             aria-label="Previous hotel"
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -77,7 +77,7 @@ export function HotelSlider({ hotels }: HotelSliderProps) {
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-sand-900/50 hover:bg-sand-900/70 text-white p-3 rounded-full transition-colors z-10"
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-sand-50/50 hover:bg-sand-50/70 text-white p-3 rounded-full transition-colors z-10"
             aria-label="Next hotel"
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
