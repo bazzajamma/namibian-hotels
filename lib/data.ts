@@ -11,8 +11,8 @@ export async function getHotels(): Promise<Hotel[]> {
 
     let supabase;
     try {
-      const { createClient } = await import('@/lib/supabase/server');
-      supabase = await createClient();
+      const { createPublicClient } = await import('@/lib/supabase/server');
+      supabase = createPublicClient();
     } catch (clientError) {
       console.log('Failed to create Supabase client, using mock data:', clientError);
       return getMockHotels();
@@ -21,13 +21,33 @@ export async function getHotels(): Promise<Hotel[]> {
     const { data, error } = await supabase.from('hotels').select('*');
     
     if (error) {
-      // Check if error is an empty object or has no meaningful content
-      const errorKeys = Object.keys(error);
-      const isEmptyError = errorKeys.length === 0 || 
-        (!error.message && !error.code && !error.details && !error.hint);
+      // Check if error is empty by stringifying it first (most reliable check)
+      let isEmpty = false;
+      try {
+        const errorStr = JSON.stringify(error);
+        isEmpty = errorStr === '{}';
+      } catch {
+        // If stringify fails, check enumerable keys
+        isEmpty = Object.keys(error).length === 0;
+      }
       
-      // Only log if error has actual meaningful content
-      if (!isEmptyError) {
+      // Check if error has meaningful content by checking specific Supabase error properties
+      const message = (error as any).message;
+      const code = (error as any).code;
+      const details = (error as any).details;
+      const hint = (error as any).hint;
+      
+      // Check if any of these properties have meaningful string content
+      const hasContent = (
+        (typeof message === 'string' && message.trim() !== '') ||
+        (typeof code === 'string' && code.trim() !== '') ||
+        (typeof details === 'string' && details.trim() !== '') ||
+        (typeof hint === 'string' && hint.trim() !== '')
+      );
+      
+      // Only log if error is NOT empty AND has meaningful content
+      // Empty objects {} will have isEmpty=true, so they won't be logged
+      if (!isEmpty && hasContent) {
         console.error('Error fetching hotels:', error);
       }
       // Silently fall back to mock data for empty errors (table likely doesn't exist yet)
@@ -64,23 +84,31 @@ export async function getHotels(): Promise<Hotel[]> {
 
 export async function getHotel(slug: string): Promise<Hotel | null> {
   try {
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
+    const { createPublicClient } = await import('@/lib/supabase/server');
+    const supabase = createPublicClient();
     
     // First try to find by slug
     let { data, error } = await supabase.from('hotels').select('*').eq('slug', slug).single();
     
     // If not found by slug, try to find by name (for backward compatibility)
     if (error || !data) {
-      // Try to find hotels and match by generated slug
-      const { data: allHotels } = await supabase.from('hotels').select('*');
-      if (allHotels) {
-        const foundHotel = allHotels.find((h: Hotel) => 
-          h.slug === slug || createSlug(h.name) === slug
-        );
-        if (foundHotel) {
-          data = foundHotel;
-          error = null;
+      // Check if error is meaningful before trying alternative lookup
+      const errorKeys = error ? Object.keys(error) : [];
+      const isEmptyError = errorKeys.length === 0 || 
+        (error && !error.message && !error.code && !error.details && !error.hint);
+      
+      // Only try alternative lookup if error is empty (table might not exist)
+      if (isEmptyError) {
+        // Try to find hotels and match by generated slug
+        const { data: allHotels } = await supabase.from('hotels').select('*');
+        if (allHotels) {
+          const foundHotel = allHotels.find((h: Hotel) => 
+            h.slug === slug || createSlug(h.name) === slug
+          );
+          if (foundHotel) {
+            data = foundHotel;
+            error = null;
+          }
         }
       }
     }
@@ -100,7 +128,10 @@ export async function getHotel(slug: string): Promise<Hotel | null> {
       description,
     };
   } catch (error) {
-    console.error('Error in getHotel:', error);
+    // Only log if error has meaningful content
+    if (error instanceof Error && error.message) {
+      console.error('Error in getHotel:', error.message);
+    }
     return getMockHotels().find(h => h.slug === slug) || null;
   }
 }
@@ -112,18 +143,33 @@ export async function getRoomsByHotel(hotelId: string): Promise<Room[]> {
       return getMockRooms().filter(r => r.hotelId === hotelId);
     }
 
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
+    const { createPublicClient } = await import('@/lib/supabase/server');
+    const supabase = createPublicClient();
     const { data, error } = await supabase.from('rooms').select('*').eq('hotel_id', hotelId);
     
     if (error) {
-      console.error('Error fetching rooms:', error);
+      // Check if error has meaningful content
+      const hasContent = (
+        (typeof error.message === 'string' && error.message.trim() !== '') ||
+        (typeof error.code === 'string' && error.code.trim() !== '') ||
+        (typeof error.details === 'string' && error.details.trim() !== '') ||
+        (typeof error.hint === 'string' && error.hint.trim() !== '')
+      );
+      
+      // Only log if error has actual meaningful content
+      if (hasContent) {
+        console.error('Error fetching rooms:', error);
+      }
+      // Silently fall back to mock data for empty errors (table likely doesn't exist yet)
       return getMockRooms().filter(r => r.hotelId === hotelId);
     }
     
     return data || getMockRooms().filter(r => r.hotelId === hotelId);
   } catch (error) {
-    console.error('Error in getRoomsByHotel:', error);
+    // Only log if error has meaningful content
+    if (error instanceof Error && error.message) {
+      console.error('Error in getRoomsByHotel:', error.message);
+    }
     return getMockRooms().filter(r => r.hotelId === hotelId);
   }
 }
@@ -135,18 +181,33 @@ export async function getRestaurantsByHotel(hotelId: string): Promise<Restaurant
       return getMockRestaurants().filter(r => r.hotelId === hotelId);
     }
 
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
+    const { createPublicClient } = await import('@/lib/supabase/server');
+    const supabase = createPublicClient();
     const { data, error } = await supabase.from('restaurants').select('*').eq('hotel_id', hotelId);
     
     if (error) {
-      console.error('Error fetching restaurants:', error);
+      // Check if error has meaningful content
+      const hasContent = (
+        (typeof error.message === 'string' && error.message.trim() !== '') ||
+        (typeof error.code === 'string' && error.code.trim() !== '') ||
+        (typeof error.details === 'string' && error.details.trim() !== '') ||
+        (typeof error.hint === 'string' && error.hint.trim() !== '')
+      );
+      
+      // Only log if error has actual meaningful content
+      if (hasContent) {
+        console.error('Error fetching restaurants:', error);
+      }
+      // Silently fall back to mock data for empty errors (table likely doesn't exist yet)
       return getMockRestaurants().filter(r => r.hotelId === hotelId);
     }
     
     return data || getMockRestaurants().filter(r => r.hotelId === hotelId);
   } catch (error) {
-    console.error('Error in getRestaurantsByHotel:', error);
+    // Only log if error has meaningful content
+    if (error instanceof Error && error.message) {
+      console.error('Error in getRestaurantsByHotel:', error.message);
+    }
     return getMockRestaurants().filter(r => r.hotelId === hotelId);
   }
 }
@@ -158,8 +219,8 @@ export async function getOffers(): Promise<Offer[]> {
       return getMockOffers();
     }
 
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
+    const { createPublicClient } = await import('@/lib/supabase/server');
+    const supabase = createPublicClient();
     // Fetch offers with their related hotels through junction table
     const { data: offersData, error: offersError } = await supabase
       .from('offers')
@@ -167,7 +228,36 @@ export async function getOffers(): Promise<Offer[]> {
       .gte('valid_until', new Date().toISOString());
     
     if (offersError) {
-      console.error('Error fetching offers:', offersError);
+      // Check if error is empty by stringifying it first (most reliable check)
+      let isEmpty = false;
+      try {
+        const errorStr = JSON.stringify(offersError);
+        isEmpty = errorStr === '{}';
+      } catch {
+        // If stringify fails, check enumerable keys
+        isEmpty = Object.keys(offersError).length === 0;
+      }
+      
+      // Check if error has meaningful content by checking specific Supabase error properties
+      const message = (offersError as any).message;
+      const code = (offersError as any).code;
+      const details = (offersError as any).details;
+      const hint = (offersError as any).hint;
+      
+      // Check if any of these properties have meaningful string content
+      const hasContent = (
+        (typeof message === 'string' && message.trim() !== '') ||
+        (typeof code === 'string' && code.trim() !== '') ||
+        (typeof details === 'string' && details.trim() !== '') ||
+        (typeof hint === 'string' && hint.trim() !== '')
+      );
+      
+      // Only log if error is NOT empty AND has meaningful content
+      // Empty objects {} will have isEmpty=true, so they won't be logged
+      if (!isEmpty && hasContent) {
+        console.error('Error fetching offers:', offersError);
+      }
+      // Silently fall back to mock data for empty errors (table likely doesn't exist yet)
       return getMockOffers();
     }
 
@@ -206,8 +296,8 @@ export async function getDestinationsByHotel(hotelId: string): Promise<Destinati
       return getMockDestinations();
     }
 
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
+    const { createPublicClient } = await import('@/lib/supabase/server');
+    const supabase = createPublicClient();
     // Fetch destinations linked to this hotel through junction table
     const { data: hotelDestinations, error: junctionError } = await supabase
       .from('hotel_destinations')
@@ -215,7 +305,19 @@ export async function getDestinationsByHotel(hotelId: string): Promise<Destinati
       .eq('hotel_id', hotelId);
     
     if (junctionError) {
-      console.error('Error fetching hotel destinations junction:', junctionError);
+      // Check if error has meaningful content
+      const hasContent = (
+        (typeof junctionError.message === 'string' && junctionError.message.trim() !== '') ||
+        (typeof junctionError.code === 'string' && junctionError.code.trim() !== '') ||
+        (typeof junctionError.details === 'string' && junctionError.details.trim() !== '') ||
+        (typeof junctionError.hint === 'string' && junctionError.hint.trim() !== '')
+      );
+      
+      // Only log if error has actual meaningful content
+      if (hasContent) {
+        console.error('Error fetching hotel destinations junction:', junctionError);
+      }
+      // Silently fall back to mock data for empty errors (table likely doesn't exist yet)
       return getMockDestinations();
     }
 
@@ -232,7 +334,19 @@ export async function getDestinationsByHotel(hotelId: string): Promise<Destinati
       .in('id', destinationIds);
     
     if (destinationsError) {
-      console.error('Error fetching destinations:', destinationsError);
+      // Check if error has meaningful content
+      const hasContent = (
+        (typeof destinationsError.message === 'string' && destinationsError.message.trim() !== '') ||
+        (typeof destinationsError.code === 'string' && destinationsError.code.trim() !== '') ||
+        (typeof destinationsError.details === 'string' && destinationsError.details.trim() !== '') ||
+        (typeof destinationsError.hint === 'string' && destinationsError.hint.trim() !== '')
+      );
+      
+      // Only log if error has actual meaningful content
+      if (hasContent) {
+        console.error('Error fetching destinations:', destinationsError);
+      }
+      // Silently fall back to mock data for empty errors (table likely doesn't exist yet)
       return getMockDestinations();
     }
 
@@ -270,12 +384,24 @@ export async function getInvestorDocuments(): Promise<InvestorDocument[]> {
       return getMockInvestorDocuments();
     }
 
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
+    const { createPublicClient } = await import('@/lib/supabase/server');
+    const supabase = createPublicClient();
     const { data, error } = await supabase.from('investor_documents').select('*').order('date', { ascending: false });
     
     if (error) {
-      console.error('Error fetching documents:', error);
+      // Check if error has meaningful content
+      const hasContent = (
+        (typeof error.message === 'string' && error.message.trim() !== '') ||
+        (typeof error.code === 'string' && error.code.trim() !== '') ||
+        (typeof error.details === 'string' && error.details.trim() !== '') ||
+        (typeof error.hint === 'string' && error.hint.trim() !== '')
+      );
+      
+      // Only log if error has actual meaningful content
+      if (hasContent) {
+        console.error('Error fetching documents:', error);
+      }
+      // Silently fall back to mock data for empty errors (table likely doesn't exist yet)
       return getMockInvestorDocuments();
     }
     

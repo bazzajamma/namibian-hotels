@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import {
   Scene,
@@ -276,8 +276,14 @@ export default function FloatingLines({
   className = ''
 }: FloatingLinesProps) {
   const { theme, systemTheme } = useTheme();
-  const currentTheme = theme === 'system' ? systemTheme : theme;
-  const isDark = currentTheme === 'dark';
+  const [isDark, setIsDark] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
+  
+  React.useEffect(() => {
+    setMounted(true);
+    const currentTheme = theme === 'system' ? systemTheme : theme;
+    setIsDark(currentTheme === 'dark');
+  }, [theme, systemTheme]);
   
   // Use theme-appropriate colors and blend mode
   const defaultGradient = isDark 
@@ -513,16 +519,24 @@ export default function FloatingLines({
     isDark
   ]);
 
+  // Use consistent style to avoid hydration mismatch
+  // Only apply opacity after mount to prevent SSR/client mismatch
+  const style: React.CSSProperties = {
+    mixBlendMode: effectiveBlendMode,
+    pointerEvents: interactive ? 'auto' : 'none',
+    background: 'transparent'
+  };
+  
+  // Only set opacity after component has mounted to avoid hydration mismatch
+  if (mounted) {
+    style.opacity = isDark ? 0.2 : undefined;
+  }
+
   return (
     <div
       ref={containerRef}
       className={`w-full h-full relative overflow-hidden floating-lines-container ${className}`}
-      style={{
-        mixBlendMode: effectiveBlendMode,
-        opacity: isDark ? 0.2 : undefined, // Lower opacity in dark mode to avoid light overlay
-        pointerEvents: interactive ? 'auto' : 'none',
-        background: 'transparent'
-      }}
+      style={style}
     />
   );
 }
