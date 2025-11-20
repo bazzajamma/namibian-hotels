@@ -8,21 +8,23 @@ import { RestaurantSlider } from '@/components/sliders/RestaurantSlider';
 import { DestinationCard } from '@/components/DestinationCard';
 import FloatingLines from '@/components/FloatingLines';
 import { getHotel, getRoomsByHotel, getRestaurantsByHotel, getDestinationsByHotel } from '@/lib/data';
+import { getAmenityIcon } from '@/lib/utils/amenity-icons';
 
 interface HotelDetailPageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }
 
 export default async function HotelDetailPage({ params }: HotelDetailPageProps) {
-  const { id } = await params;
-  const hotel = await getHotel(id);
-  const rooms = await getRoomsByHotel(id);
-  const restaurants = await getRestaurantsByHotel(id);
-  const destinations = await getDestinationsByHotel(id);
-
+  const { slug } = await params;
+  const hotel = await getHotel(slug);
+  
   if (!hotel) {
     notFound();
   }
+
+  const rooms = await getRoomsByHotel(hotel.id);
+  const restaurants = await getRestaurantsByHotel(hotel.id);
+  const destinations = await getDestinationsByHotel(hotel.id);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -61,22 +63,29 @@ export default async function HotelDetailPage({ params }: HotelDetailPageProps) 
         {/* Hotel Description */}
         <section className="py-12 bg-white dark:bg-sand-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl">
-              <h2 className="text-3xl font-bold text-sand-900 dark:text-sand-100 mb-6">About This Hotel</h2>
-              <p className="text-lg text-sand-700 dark:text-sand-300 mb-6">{hotel.description}</p>
+            <div className="max-w-5xl mx-auto">
+              <h2 className="text-3xl font-bold text-sand-900 dark:text-sand-100 mb-6 text-center">About This Hotel</h2>
+              <p className="text-xl text-center text-sand-700 dark:text-sand-300 mb-8">{hotel.excerpt}</p>
+              
+              {/* Full Description */}
+              {hotel.description && (
+                <div className="mb-8 text-center">
+                  <p className="text-base text-sand-600 dark:text-sand-400 leading-relaxed">{hotel.description}</p>
+                </div>
+              )}
+              
+              {/* Amenities */}
               {hotel.amenities && hotel.amenities.length > 0 && (
-                <div>
-                  <h3 className="text-xl font-semibold text-sand-900 dark:text-sand-100 mb-4">Amenities</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div className="mt-14">
+                  <h3 className="text-xl font-semibold text-terracotta-900 dark:text-terracotta-100 mb-14 text-center">Amenities</h3>
+                  <div className="flex justify-center gap-6 bg-terracotta-100 dark:bg-terracotta-900 p-8 overflow-visible w-screen absolute left-0 -mt-10">
                     {hotel.amenities.map((amenity, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center gap-2 text-sand-700 dark:text-sand-300"
+                        className="flex flex-col items-center gap-2 text-sand-700 dark:text-sand-300 min-w-[80px] w-100"
                       >
-                        <svg className="w-5 h-5 text-terracotta-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        {amenity}
+                        {getAmenityIcon(amenity)}
+                        <span className="text-sm font-medium text-center">{amenity}</span>
                       </div>
                     ))}
                   </div>

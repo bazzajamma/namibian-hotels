@@ -41,7 +41,7 @@ export function HotelSlider({ hotels }: HotelSliderProps) {
         >
           {hotels.map((hotel) => (
             <div key={hotel.id} className="min-w-full">
-              <Link href={`/hotels/${hotel.id}`}>
+              <Link href={`/hotels/${hotel.slug}`}>
                 <div className="relative h-[500px] md:h-[600px] group cursor-pointer">
                   <Image
                     src={hotel.images[0] || '/placeholder-hotel.jpg'}
@@ -53,7 +53,7 @@ export function HotelSlider({ hotels }: HotelSliderProps) {
                   <div className="absolute inset-0 bg-gradient-to-t from-sand-900/80 via-sand-900/40 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
                     <h3 className="text-3xl text-terracotta-400 md:text-4xl font-bold mb-2">{hotel.name}</h3>
-                    <p className="text-lg mb-4 text-sand-50 line-clamp-2">{hotel.description}</p>
+                    <p className="text-lg mb-4 text-sand-50 line-clamp-2">{hotel.excerpt}</p>
                     <p className="text-terracotta-300 font-semibold">{hotel.location}</p>
                   </div>
                 </div>

@@ -1,4 +1,5 @@
 import { Hotel, Room, Restaurant, Offer, Destination, InvestorDocument } from '@/types';
+import { createSlug } from '@/lib/utils/slug';
 
 // Mock data for development - replace with actual Supabase queries
 export async function getHotels(): Promise<Hotel[]> {
@@ -38,7 +39,20 @@ export async function getHotels(): Promise<Hotel[]> {
       return getMockHotels();
     }
     
-    return data;
+    // Ensure all hotels have slugs and handle excerpt/description
+    return data.map((hotel: any) => {
+      // If hotel has description but no excerpt, use description as excerpt
+      // This handles backward compatibility
+      const excerpt = hotel.excerpt || hotel.description || '';
+      const description = hotel.description || hotel.excerpt || '';
+      
+      return {
+        ...hotel,
+        slug: hotel.slug || createSlug(hotel.name),
+        excerpt,
+        description,
+      };
+    });
   } catch (error) {
     // Only log if error has meaningful content
     if (error instanceof Error && error.message) {
@@ -48,21 +62,46 @@ export async function getHotels(): Promise<Hotel[]> {
   }
 }
 
-export async function getHotel(id: string): Promise<Hotel | null> {
+export async function getHotel(slug: string): Promise<Hotel | null> {
   try {
     const { createClient } = await import('@/lib/supabase/server');
     const supabase = await createClient();
-    const { data, error } = await supabase.from('hotels').select('*').eq('id', id).single();
     
-    if (error) {
-      console.error('Error fetching hotel:', error);
-      return getMockHotels().find(h => h.id === id) || null;
+    // First try to find by slug
+    let { data, error } = await supabase.from('hotels').select('*').eq('slug', slug).single();
+    
+    // If not found by slug, try to find by name (for backward compatibility)
+    if (error || !data) {
+      // Try to find hotels and match by generated slug
+      const { data: allHotels } = await supabase.from('hotels').select('*');
+      if (allHotels) {
+        const foundHotel = allHotels.find((h: Hotel) => 
+          h.slug === slug || createSlug(h.name) === slug
+        );
+        if (foundHotel) {
+          data = foundHotel;
+          error = null;
+        }
+      }
     }
     
-    return data;
+    if (error || !data) {
+      return getMockHotels().find(h => h.slug === slug) || null;
+    }
+    
+    // Ensure slug exists and handle excerpt/description
+    const excerpt = data.excerpt || data.description || '';
+    const description = data.description || data.excerpt || '';
+    
+    return {
+      ...data,
+      slug: data.slug || createSlug(data.name),
+      excerpt,
+      description,
+    };
   } catch (error) {
     console.error('Error in getHotel:', error);
-    return getMockHotels().find(h => h.id === id) || null;
+    return getMockHotels().find(h => h.slug === slug) || null;
   }
 }
 
@@ -253,7 +292,9 @@ function getMockHotels(): Hotel[] {
     {
       id: '1',
       name: 'Sossusvlei Desert Lodge',
-      description: 'Luxury accommodation in the heart of the Namib Desert, offering breathtaking views of the world\'s oldest desert.',
+      slug: 'sossusvlei-desert-lodge',
+      excerpt: 'Luxury accommodation in the heart of the Namib Desert, offering breathtaking views of the world\'s oldest desert. Perfect for a romantic getaway or a family vacation.',
+      description: 'Nestled in the heart of the ancient Namib Desert, Sossusvlei Desert Lodge offers an unparalleled luxury experience surrounded by some of the world\'s highest sand dunes. Our award-winning lodge combines contemporary elegance with authentic desert charm, providing guests with an intimate connection to this extraordinary landscape. Each suite features floor-to-ceiling windows framing ever-changing desert vistas, while our world-class spa offers rejuvenating treatments inspired by the desert\'s natural elements.',
       images: ['/hotels/sossusvlei-desert-lodge/exterior.jpg'],
       location: 'Sossusvlei, Namibia',
       destinations: ['1', '2'],
@@ -263,7 +304,9 @@ function getMockHotels(): Hotel[] {
     {
       id: '2',
       name: 'Etosha Safari Resort',
-      description: 'Experience the wild beauty of Etosha National Park from our premium safari resort.',
+      slug: 'etosha-safari-resort',
+      excerpt: 'Experience the wild beauty of Etosha National Park from our premium safari resort. Perfect for a safari adventure or a family vacation.',
+      description: 'Etosha Safari Resort stands as a premier gateway to one of Africa\'s most remarkable wildlife sanctuaries, Etosha National Park. Our thoughtfully designed resort seamlessly blends luxury accommodation with authentic safari experiences, allowing guests to witness incredible African wildlife diversity right from their private balconies. Expert guides lead daily game drives revealing the park\'s magnificent inhabitants including elephants, lions, rhinos, and countless other species. After exhilarating wildlife encounters, unwind at our award-winning restaurant serving contemporary African cuisine.',
       images: ['/hotels/etosha-safari-resort/exterior.jpg'],
       location: 'Etosha, Namibia',
       destinations: ['2', '3'],
@@ -273,7 +316,9 @@ function getMockHotels(): Hotel[] {
     {
       id: '3',
       name: 'Swakopmund Coastal Hotel',
-      description: 'Modern beachfront hotel combining desert and ocean experiences in Namibia\'s adventure capital.',
+      slug: 'swakopmund-coastal-hotel',
+      excerpt: 'Modern beachfront hotel combining desert and ocean experiences in Namibia\'s adventure capital. Perfect for a beach vacation or a family vacation.',
+      description: 'Swakopmund Coastal Hotel represents the perfect fusion of desert and ocean, offering guests a unique opportunity to experience Namibia\'s dramatic coastal landscape where the Namib Desert meets the Atlantic Ocean. This contemporary beachfront property combines modern luxury with the rich cultural heritage of Swakopmund, Namibia\'s premier adventure destination. Our spacious rooms feature panoramic ocean or desert views, while our comprehensive facilities cater to both relaxation and adventure seekers. From world-class surfing and sandboarding to tranquil spa treatments and fine dining, the hotel serves as an ideal base for exploring the region\'s diverse attractions.',
       images: ['/hotels/swakopmund-coastal-hotel.jpg'],
       location: 'Swakopmund, Namibia',
       destinations: ['1', '3'],

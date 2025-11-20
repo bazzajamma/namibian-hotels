@@ -25,7 +25,7 @@ export default async function HotelsPage() {
           {hotels.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {hotels.map((hotel) => (
-                <Link key={hotel.id} href={`/hotels/${hotel.id}`}>
+                <Link key={hotel.id} href={`/hotels/${hotel.slug}`}>
                   <div className="group relative overflow-hidden rounded-lg bg-sand-100 dark:bg-sand-800 hover:shadow-xl transition-all duration-300 cursor-pointer">
                     <div className="relative h-64">
                       <Image
@@ -34,7 +34,7 @@ export default async function HotelsPage() {
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-300"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-sand-900/80 to-transparent" />
+                      <div className="absolute hover:scale-110 transition-transform duration-300 inset-0 bg-gradient-to-t from-sand-900/80 to-transparent" />
                       {hotel.rating && (
                         <div className="absolute top-4 right-4 bg-terracotta-500 text-white px-3 py-1 rounded-full font-semibold">
                           ★ {hotel.rating}
@@ -49,7 +49,7 @@ export default async function HotelsPage() {
                         {hotel.location}
                       </p>
                       <p className="text-sand-700 dark:text-sand-300 mb-4 line-clamp-2">
-                        {hotel.description}
+                        {hotel.excerpt}
                       </p>
                       {hotel.amenities && hotel.amenities.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-4">

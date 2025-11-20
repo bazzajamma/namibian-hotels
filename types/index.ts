@@ -1,6 +1,8 @@
 export interface Hotel {
   id: string;
   name: string;
+  slug: string;
+  excerpt: string;
   description: string;
   images: string[];
   location: string;
